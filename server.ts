@@ -66,7 +66,10 @@ Respond ONLY with the JSON object. ALL TEXT (explanation, treatment, prevention)
       return res.json(diagnosis);
     } catch (error: any) {
       console.warn("Error generating diagnosis fallback:", error?.message || error);
-      return res.status(500).json({ error: "Failed to generate diagnosis using AI fallback." });
+      return res.status(500).json({ 
+        error: "Failed to generate diagnosis using AI fallback.",
+        details: error?.message || "Unknown error"
+      });
     }
   });
 
