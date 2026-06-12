@@ -66,7 +66,13 @@ Respond ONLY with the JSON object. ALL TEXT (explanation, treatment, prevention)
       return res.json(diagnosis);
     } catch (error: any) {
       console.warn("Error generating diagnosis fallback:", error?.message || error);
-      return res.status(500).json({ error: "Failed to generate diagnosis using AI fallback." });
+      
+      const errorMessage = error?.message || "";
+      if (errorMessage.includes("API key not valid") || errorMessage.includes("key") || errorMessage.includes("restricted")) {
+        return res.status(401).json({ error: "Your Gemini API key is invalid or restricted. Please generate a new key in Google AI Studio and update it in the application settings." });
+      }
+
+      return res.status(500).json({ error: "Failed to generate diagnosis using AI fallback. Please check your API key." });
     }
   });
 
