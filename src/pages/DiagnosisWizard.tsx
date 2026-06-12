@@ -173,8 +173,7 @@ export default function DiagnosisWizard() {
         });
 
         if (!response.ok) {
-          const errData = await response.json().catch(() => ({}));
-          throw new Error(errData.details || "AI Fallback failed");
+          throw new Error("AI Fallback failed");
         }
         const aiDiagnosis = await response.json();
 
@@ -190,22 +189,14 @@ export default function DiagnosisWizard() {
           }
         });
       }
-    } catch (err: any) {
+    } catch (err) {
       console.warn("AI fallback API error:", err);
       
       const topDiseaseId = sortedDiseases[0]?.[0];
       const diagnosis = currentCrop.diseases.find(d => d.id === topDiseaseId);
       
-      const errorMessage = err?.message || "";
-      if (errorMessage.includes("API key was reported as leaked") || errorMessage.includes("API key not valid")) {
-        alert(t("Your Gemini API key is invalid or leaked. Please update it in settings. | আপনার জেমিনি API কী অবৈধ বা ফাঁস হয়েছে৷ অনুগ্রহ করে সেটিংসে এটি আপডেট করুন৷"));
-      } else if (diagnosis) {
-        alert(t("AI analysis is currently unavailable due to high demand. Showing the best matched rule-based result instead. | অতিরিক্ত চাহিদার কারণে এআই বিশ্লেষণ বর্তমানে অনুপলব্ধ। বিকল্পভাবে সেরা ম্যাচ করা নিয়ম-ভিত্তিক ফলাফল দেখানো হচ্ছে।"));
-      } else {
-        alert(t("An error occurred during diagnosis. Please try again. | রোগ নির্ণয়ের সময় একটি ত্রুটি ঘটেছে. আবার চেষ্টা করুন."));
-      }
-
       if (diagnosis) {
+        alert(t("AI analysis is currently unavailable due to high demand. Showing the best matched rule-based result instead. | অতিরিক্ত চাহিদার কারণে এআই বিশ্লেষণ বর্তমানে অনুপলব্ধ। বিকল্পভাবে সেরা ম্যাচ করা নিয়ম-ভিত্তিক ফলাফল দেখানো হচ্ছে।"));
         setIsProcessing(false);
         navigate("/results", {
           state: {
@@ -219,6 +210,7 @@ export default function DiagnosisWizard() {
         });
       } else {
         setIsProcessing(false);
+        alert(t("An error occurred during diagnosis. Please try again. | রোগ নির্ণয়ের সময় একটি ত্রুটি ঘটেছে. আবার চেষ্টা করুন."));
       }
     }
   };
